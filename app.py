@@ -1,5 +1,4 @@
 from flask import Flask, request, render_template
-from flask_cors import cross_origin
 import sklearn
 import pickle
 import pandas as pd
@@ -10,27 +9,22 @@ model = pickle.load(open("House_Price_Prediction.pkl", "rb"))
 
 
 @app.route("/")
-@cross_origin()
 def index():
     return render_template("index.html")
 
-@app.route("/predict", methods = ["GET", "POST"])
-@cross_origin()
+@app.route("/predict", methods = ["POST"])
 def predict():
-    if request.method == "POST":
 
-        house_area = int(request.form["House_Area"])
+    house_area = int(request.form["House_Area"])
          
-        house_bedrooms = int(request.form["House_Bedrooms"])
-        house_age = int(request.form["House_Age"])
+    house_bedrooms = int(request.form["House_Bedrooms"])
+    house_age = int(request.form["House_Age"])
         
-        prediction=model.predict([[ house_area, house_bedrooms, house_age ]])
+    prediction=model.predict([[ house_area, house_bedrooms, house_age ]])
 
-        output=round(prediction[0],2)
+    output=round(prediction[0],2)
 
-        return render_template('index.html',prediction_text="Your House price is Rs. {}".format(output))
-
-    return render_template("index.html")
+    return render_template('index.html',prediction_text="Your House price is Rs. {}".format(output))
 
 
 if __name__ == "__main__":
